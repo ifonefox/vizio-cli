@@ -31,7 +31,7 @@ class Controller {
     for(let i = 0; i < list.ITEMS.length; i++){
       const device = list.ITEMS[i];
       if(device.NAME === currrent_input){
-        return device.VALUE.NAME;
+        return {name: device.VALUE.NAME, internal_name: currrent_input};
       }
     }
     return null;
@@ -52,9 +52,26 @@ class Controller {
     return output;
   }
   async input_set(name){
-    await this.tv.input.set(name);
+    name = name.toLowerCase();
+    let cur = await this.input_current();
+    if(name !== cur.name.toLowerCase() && name !== cur.internal_name.toLowerCase()){
+      await this.tv.input.set(name);
+    }
+  }
+  async volume_up(ammount){
+    let i = 0;
+    while(i < ammount){
+      i++;
+      await this.tv.control.volume.up();
+    }
+  }
+  async volume_down(ammount){
+    let i = 0;
+    while(i < ammount){
+      i++;
+      await this.tv.control.volume.down();
+    }
   }
 }
-
 
 module.exports = Controller;

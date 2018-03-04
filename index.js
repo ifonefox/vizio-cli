@@ -11,6 +11,17 @@ async function get_user_input(userprompt){
     });
   });
 }
+async function list(viz){
+  const list = await viz.input_list();
+  console.log("Inputs:");
+  for(let i = 0; i < list.length; i++){
+    if(list[i].current){
+      console.log(`  ${list[i].name} (Current)`);
+    } else {
+      console.log(`  ${list[i].name}`);
+    }
+  }
+}
 async function main(){
   let ip, token, viz;
   if(argv.ip !== undefined){
@@ -32,10 +43,27 @@ async function main(){
     viz = new smarttv(ip, token);
   }
 
-  if(argv.selectInput !== undefined){
-    viz.input_set(argv.selectInput);
+  if(argv.input !== undefined){
+    if(argv.input === true){
+      await list(viz);
+    } else {
+      await viz.input_set(argv.input);
+    }
   }
-
+  if(argv.volumeUp !== undefined){
+    if(argv.volumeUp === true){
+      await viz.volume_up(1);
+    } else {
+      await viz.volume_up(parseInt(argv.volumeUp));
+    }
+  }
+  if(argv.volumeDown !== undefined){
+    if(argv.volumeDown === true){
+      await viz.volume_down(1);
+    } else {
+      await viz.volume_down(parseInt(argv.volumeDown));
+    }
+  }
 }
 console.log(argv);
 main();
