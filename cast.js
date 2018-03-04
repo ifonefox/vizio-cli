@@ -51,6 +51,9 @@ class Controller {
     }
     return output;
   }
+  async input_set(name){
+    await this.tv.input.set(name);
+  }
 }
 
 
