@@ -22,6 +22,11 @@ async function list(viz){
     }
   }
 }
+function device_print(device){
+  console.log(`  TV: ${device.name}`);
+  console.log(`      ${device.manufacturer} ${device.model}`);
+  console.log(`  IP: ${device.ip}`);
+}
 async function main(){
   let ip, token, viz;
   if(argv.ip !== undefined){
@@ -29,7 +34,23 @@ async function main(){
   } else if(process.env.SMARTCAST_IP !== undefined){
     ip = process.env.SMARTCAST_IP;
   } else {
-    ip = await get_user_input('IP: ');
+    //ip = await get_user_input('IP: ');
+    const devices = await smarttv.discover(true);
+    if(devices.length == 0){
+      console.log("Error: No VIZIO tvs found");
+      return;
+    } else if (devices.length == 1){
+      const device = devices[0];
+      ip = device.ip;
+      device_print(device);
+    } else {
+      for(let i = 0; i < devices.length; i++){
+        console.log(`${i}:`);
+        device_print(devices[i]);
+      }
+      const answer = await get_user_input("Enter device number: ");
+      ip = devices[parseInt(answer)].ip;
+    }
   }
   if(argv.ip !== undefined){
     token = argv.token;
@@ -38,7 +59,7 @@ async function main(){
   }
   if(token === undefined){
     viz = new smarttv(ip);
-    viz.pair(get_user_input("PIN: "));
+    await viz.pair(get_user_input("PIN: "));
   } else {
     viz = new smarttv(ip, token);
   }
@@ -64,6 +85,8 @@ async function main(){
       await viz.volume_down(parseInt(argv.volumeDown));
     }
   }
+  if(argv.volume !== undefined && argv.volume !== true){
+    await viz.volume_set(parseInt(argv.volume));
+  }
 }
-console.log(argv);
 main();

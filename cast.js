@@ -1,10 +1,33 @@
-let smartcast = require('vizio-smart-cast');
+const smartcast = require('vizio-smart-cast');
+
 class Controller {
   constructor(ip, auth_token){
     this.tv = new smartcast(ip);
     if(auth_token !== undefined){
       this.tv.pairing.useAuthToken(auth_token);
     }
+  }
+  static discover(more_than_one){
+    if(more_than_one === undefined){
+      more_than_one = false;
+    }
+    return new Promise(resolve=>{
+      const timeout = 1000;
+      let list = [];
+      smartcast.discover(item=>{
+        if(more_than_one){
+          list.push(item);
+        } else {
+          resolve([item]);
+          return;
+        }
+      }, function(){},timeout);
+      if(more_than_one){
+        setTimeout(()=>{
+          resolve(list);
+        },timeout);
+      }
+    });
   }
   async pair(request_pin){
     try {
@@ -71,6 +94,11 @@ class Controller {
       i++;
       await this.tv.control.volume.down();
     }
+  }
+  async volume_set(value){
+    // This is inefficient. Don't use this unless you REALLY want to set the exact volume.
+    await this.volume_down(100);
+    await this.volume_up(value);
   }
 }
 
