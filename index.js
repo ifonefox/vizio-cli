@@ -1,11 +1,28 @@
 #!/usr/bin/env node
 let readline = require('readline');
 let smarttv = require('./cast.js');
-let argv = require('yargs').argv;
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const os = require('os');
+let argv = require('yargs')
+  .usage("$0 [args]")
+  .option("save",{
+    type: 'boolean',
+    desc: 'Save IP/Token to ~/.vizio.js'
+  }).option("input",{
+    type: 'string',
+    desc: 'Set the input. Leave blank for a list of inputs'
+  }).option("volumeUp", {
+    type:'count',
+    desc: "Amount to increase the volume"
+  }).option("volumeDown", {
+    type:'count',
+    desc: "Amount to decrease the volume"
+  }).option('volume',{
+    type: 'number',
+    desc:'Set the TV volume'
+  }).argv;
 
 async function get_user_input(userprompt){
   return new Promise(resolve => {
@@ -82,10 +99,14 @@ async function main(){
   }
 
   if(argv.input !== undefined){
-    if(argv.input === true){
+    if(argv.input === ''){
       await list(viz);
     } else {
-      await viz.input_set(argv.input);
+      try {
+        await viz.input_set(argv.input);
+      } catch(e){
+        console.log(e);
+      }
     }
   }
   if(argv.volumeUp !== undefined){
