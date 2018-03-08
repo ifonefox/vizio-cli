@@ -1,10 +1,13 @@
 {
-  "name": "vizio-test",
+  "name": "vizio-cli",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "vizio": "./index.js"
   },
   "author": "",
   "license": "ISC",

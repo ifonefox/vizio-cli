@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 let readline = require('readline');
 let smarttv = require('./cast.js');
 let argv = require('yargs').argv;
