@@ -2,6 +2,10 @@
 let readline = require('readline');
 let smarttv = require('./cast.js');
 let argv = require('yargs').argv;
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const os = require('os');
 
 async function get_user_input(userprompt){
   return new Promise(resolve => {
@@ -29,11 +33,17 @@ function device_print(device){
   console.log(`  IP: ${device.ip}`);
 }
 async function main(){
+  const readFile = util.promisify(fs.readFile);
+  let config = await readFile(path.resolve(os.homedir(),".vizio.js"))
+    .catch((e)=>{console.log(e);return null;})
+    .then((data)=>{return JSON.parse(data);});
   let ip, token, viz;
   if(argv.ip !== undefined){
     ip = argv.ip;
   } else if(process.env.SMARTCAST_IP !== undefined){
     ip = process.env.SMARTCAST_IP;
+  } else if(config != null && config.ip !== undefined) {
+    ip = config.ip;
   } else {
     //ip = await get_user_input('IP: ');
     const devices = await smarttv.discover(true);
@@ -57,10 +67,12 @@ async function main(){
     token = argv.token;
   } else if(process.env.SMARTCAST_IP !== undefined){
     token = process.env.SMARTCAST_TOKEN;
+  } else if (config != null && config.token !== undefined){
+    token = config.token;
   }
   if(token === undefined){
     viz = new smarttv(ip);
-    await viz.pair(get_user_input("PIN: "));
+    token = await viz.pair(get_user_input("PIN: "));
   } else {
     viz = new smarttv(ip, token);
   }
