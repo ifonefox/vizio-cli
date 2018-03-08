@@ -35,7 +35,7 @@ function device_print(device){
 async function main(){
   const readFile = util.promisify(fs.readFile);
   let config = await readFile(path.resolve(os.homedir(),".vizio.js"))
-    .catch((e)=>{console.log(e);return null;})
+    .catch(()=>{return null;})
     .then((data)=>{return JSON.parse(data);});
   let ip, token, viz;
   if(argv.ip !== undefined){
@@ -75,6 +75,10 @@ async function main(){
     token = await viz.pair(get_user_input("PIN: "));
   } else {
     viz = new smarttv(ip, token);
+  }
+  if(argv.save == true){
+    await util.promisify(fs.writeFile)(path.resolve(os.homedir(), ".vizio.js"),
+      JSON.stringify({ip:ip,token:token}));
   }
 
   if(argv.input !== undefined){
