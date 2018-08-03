@@ -1,6 +1,6 @@
 {
   "name": "vizio-cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "vizio-smart-cast": "^1.1.7",
-    "yargs": "^11.0.0"
+    "vizio-smart-cast": "^1.2.1",
+    "yargs": "^11.1.0"
   }
 }

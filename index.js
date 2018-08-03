@@ -5,11 +5,14 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const os = require('os');
+
+const CONFIG = ".vizio.json";
 let argv = require('yargs')
+  .version('v1.0.2')
   .usage("$0 [args]")
   .option("save",{
     type: 'boolean',
-    desc: 'Save IP/Token to ~/.vizio.js'
+    desc: 'Save IP/Token to ~/'+CONFIG
   }).option("input",{
     type: 'string',
     desc: 'Set the input. Leave blank for a list of inputs'
@@ -23,7 +26,6 @@ let argv = require('yargs')
     type: 'number',
     desc:'Set the TV volume'
   }).argv;
-
 async function get_user_input(userprompt){
   return new Promise(resolve => {
     const i = readline.createInterface(process.stdin, process.stdout, null);
@@ -51,7 +53,7 @@ function device_print(device){
 }
 async function main(){
   const readFile = util.promisify(fs.readFile);
-  let config = await readFile(path.resolve(os.homedir(),".vizio.js"))
+  let config = await readFile(path.resolve(os.homedir(),CONFIG))
     .catch(()=>{return null;})
     .then((data)=>{return JSON.parse(data);});
   let ip, token, viz;
@@ -94,7 +96,7 @@ async function main(){
     viz = new smarttv(ip, token);
   }
   if(argv.save == true){
-    await util.promisify(fs.writeFile)(path.resolve(os.homedir(), ".vizio.js"),
+    await util.promisify(fs.writeFile)(path.resolve(os.homedir(), CONFIG),
       JSON.stringify({ip:ip,token:token}));
   }
 

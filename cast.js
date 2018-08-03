@@ -1,7 +1,8 @@
 const smartcast = require('vizio-smart-cast');
 
 class Controller {
-  constructor(ip, auth_token){
+  constructor(ip, auth_token, name){
+    this.name = name
     this.tv = new smartcast(ip);
     if(auth_token !== undefined){
       this.tv.pairing.useAuthToken(auth_token);
@@ -31,7 +32,7 @@ class Controller {
   }
   async pair(request_pin){
     try {
-      await this.tv.pairing.initiate();
+      await this.tv.pairing.initiate(this.name);
     } catch (e) {
       console.log('Error initiating: ',e);
       process.exit(1);
