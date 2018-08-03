@@ -1,7 +1,7 @@
 # Usage:
 Must be on same network as the TV
 
-
+~~~~
 index.js [args]
 
 Options:
@@ -12,4 +12,4 @@ Options:
   --volumeUp    Amount to increase the volume                            [count]
   --volumeDown  Amount to decrease the volume                            [count]
   --volume      Set the TV volume                                       [number]
-
+~~~~
